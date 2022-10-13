@@ -5,8 +5,14 @@ terraform {
       version = "4.33.0"
     }
   }
-}
+  backend "s3" {
+    bucket         = "dileep-webapp-demo"
+    key            = "dileep/terraform/remote/s3/terraform.tfstate"
+    region         = "ap-south-1"
+    dynamodb_table = "dynamodb-state-locking"
 
+  }
+}
 provider "aws" {
   # Configuration options
   region = "ap-south-1"
@@ -136,3 +142,4 @@ resource "aws_lb_listener" "webapp-LB-listener" {
     target_group_arn = aws_lb_target_group.Webapp-LB-target-group.arn
   }
 }
+
