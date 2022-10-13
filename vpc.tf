@@ -47,74 +47,8 @@ resource "aws_subnet" "subnet-1b" {
 }
 
 
-#creating ec2 instance on our vpc and our subnet
 
-resource "aws_instance" "frontend_server" {
-  #ami                   = "ami-062f7200baf2fa504"
-  ami                    = "ami-062df10d14676e201"
-  key_name               = "FirstKeyPair"
-  instance_type          = "t2.micro"
-  subnet_id              = aws_subnet.subnet-1a.id
-  vpc_security_group_ids = [aws_security_group.allow_80_22.id]
 
-  tags = {
-    Name  = "terraform provided ec2"
-    App   = "frontend"
-    Owner = "dileep"
-  }
-}
-
-resource "aws_instance" "backend_server" {
-  #ami                   = "ami-062f7200baf2fa504"
-  ami                    = "ami-062df10d14676e201"
-  key_name               = "FirstKeyPair"
-  instance_type          = "t2.micro"
-  subnet_id              = aws_subnet.subnet-1b.id
-  vpc_security_group_ids = [aws_security_group.allow_80_22.id]
-
-  tags = {
-    Name  = "terraform provided ec2 backend server"
-    App   = "backend"
-    Owner = "dileep"
-  }
-}
-
-#creating security group
-resource "aws_security_group" "allow_80_22" {
-  name        = "allow-port-22-and-port-80"
-  description = "Allow HTTP and SSH traffic"
-  vpc_id      = aws_vpc.demo-vpc.id
-
-  ingress {
-    description = "allow port 22"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-
-  }
-
-  ingress {
-    description = "allow port 80"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  tags = {
-    Name = "allow_HTTP_SSH"
-  }
-}
 
 
 #creating Internet Gateway
@@ -186,36 +120,6 @@ resource "aws_lb" "Webapp-LB1" {
 
   tags = {
     Environment = "production"
-  }
-}
-
-#creating SG for LB
-resource "aws_security_group" "allow-80-for-LB" {
-  name        = "allow-port-80"
-  description = "Allow HTTP traffic"
-  vpc_id      = aws_vpc.demo-vpc.id
-
-
-
-  ingress {
-    description = "allow port 80"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  tags = {
-    Name = "allow_HTTP"
   }
 }
 
